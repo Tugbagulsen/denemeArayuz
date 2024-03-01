@@ -21,8 +21,8 @@ frame_alt_sag = Frame(master, bg="#add8e6")  # arka plan rengini belirler
 frame_alt_sag.place(relx=0.35, rely=0.21, relheight=0.5, relwidth=0.5)  # yerini belirler
 
 # Üst çerçeveye "Hatırlatma Tipi" etiketi ekler
-hatirlatma_tipi_etiket = Label(frame_ust, bg="#add8e6", text="Hatırlatma tipi", font="Verdana 12 bold")
-hatirlatma_tipi_etiket.pack(side=LEFT, padx="10", pady="10")
+hatirlatma_tipi_etiket = Label(frame_ust, bg="#add8e6", text="Hatırlatma tipi", font="Verdana 12 bold") #Görünüm
+hatirlatma_tipi_etiket.pack(side=LEFT, padx="10", pady="10") #Konum
 
 # Üst çerçeveye "Doğum Günü", "Alışveriş", "Ödeme" seçeneklerini içeren açılır menü ekler
 hatirlatma_tipi_opsiyon = StringVar(frame_ust)  # bir String değişken tanımlar
