@@ -1,56 +1,62 @@
-from tkinter import *
-from tkinter import messagebox
-from  tkcalendar import DateEntry
+import tkinter as tk
+from tkinter import LabelFrame
 
-master = Tk()
+master = tk.Tk()
 
-
-canvas = Canvas(master, width=1000, height=450)
-canvas.pack()
-
+canvas_genislik = 1000
+canvas_yukseklik = 450
 panel_genislik = 150
 panel_yukseklik = 250
-panel_aralik = 10
-ust_bosluk = 20
+panel_margin = 10
+top_margin = 20
 
-frameVeriPanel = Frame(master, width=panel_genislik, height=panel_yukseklik, highlightbackground='Black', highlightthickness=1)
-frameVeriPanel.place(relx=0.04, rely=ust_bosluk / 450, relwidth=0.5, relheight=0.65)
-#relx = Panelin pencerenin sol üst köşesinden yatay olarak ne kadar uzak olacağını belirtir
-#rely = Panelin pencerenin sol üst köşesinden dikey olarak ne kadar uzaklıkta olacağını belirtir
-#relwidth = Panelin genişliğinin pencerenin genişliğine oranıdır
-#reheight = Panelin yüksekliğinin pencerenin yüksekliğine oranıdır
+canvas = tk.Canvas(master, width=canvas_genislik, height=canvas_yukseklik)
+canvas.pack()
 
-frameAracPanel = Frame(master, width=panel_genislik, height=panel_yukseklik, highlightbackground='Black', highlightthickness=1)
-frameAracPanel.place(relx=0.6, rely=0.04, relwidth=0.34, relheight=0.1)
+def label_frame_olusturma(master, text, relx, rely, relwidth, relheight):
+    label_frame = LabelFrame(master, text=text)
+    label_frame.place(relx=relx, rely=rely, relwidth=relwidth, relheight=relheight)
+    return label_frame
 
-labelAracFrame = Label(frameAracPanel, text="Jetson Nano    192.168.1.1")
-labelAracFrame.pack(padx="10", pady="10", anchor=NW)
+# Veri Paneli Oluşturma Fonksiyonu
+label_frame_veri = label_frame_olusturma(master, "Veri", 0.04, top_margin / canvas_yukseklik, 0.5, 0.65)
 
-butonBağlanAracFrame = Button(master, text ="Bağlan", )
-butonBağlanAracFrame.place(x=850,y=30)
+# Arac Paneli Oluşturma Fonksiyonu
+label_frame_arac = label_frame_olusturma(master, "Arac", 0.6, 0.04, 0.34, 0.1)
+label_arac = tk.Label(label_frame_arac, text="Jetson Nano    192.168.1.1")
+label_arac.pack(padx=15, pady=5, anchor=tk.NW)
 
+# Sonuç Paneli Oluşturma Fonksiyonu
+label_frame_sonuc = label_frame_olusturma(master, "Sonuç", 0.04, top_margin / 28, 0.9, 0.2)
 
-frameSonucPanel = Frame(master, width=panel_genislik, height=panel_yukseklik, highlightbackground='Black', highlightthickness=1)
-frameSonucPanel.place(relx=0.04, rely=ust_bosluk / 28, relwidth=0.9, relheight=0.2)
+# Sonuç Label'larını Dinamik Olarak Yerleştirme Fonksiyonu
+def place_labels(veriler):
+    for i, veri in enumerate(veriler):
+        row = i // 3
+        column = i % 3
+        label = tk.Label(label_frame_sonuc, text=veri, font=("Arial", 10))
+        label.grid(row=row, column=column, padx=35, pady=5, sticky="w")
 
-frameFonksiyonlarPanel = Frame(master, width=panel_genislik, height=panel_yukseklik, highlightbackground='Black', highlightthickness=1)
-frameFonksiyonlarPanel.place(relx=0.6, rely=0.2, relwidth=0.34, relheight=0.5)
+# Veriler
+veriler = [
+    "Kırmızı Renk Tespit Edildi: ",
+    "Çember Tespit Sayısı: ",
+    "Pinger Tespit Edildi:",
+    "Araç Konumlanıyor:",
+    "Tamamlanan Çember Sayısı:"
+]
+# Dinamik olarak label yerleştirme işlemini gerçekleştir
+place_labels(veriler)
 
+# Fonksiyon Paneli Oluşturma Fonksiyonu
+label_frame_fonksiyon = label_frame_olusturma(master, "Fonksiyon", 0.6, 0.2, 0.35, 0.5)
 
-# Farklı metinleri içeren bir liste
+# Butonları Dinamik Olarak Yerleştirme
 buton_metinleri = ["Batma", "Çıkma", "Sağ", "Sol", "İleri", "Geri", "Reset", "Kamera", "Arm", "Disarm", "Stabilize", "Auto"]
-
-# Butonların sayısına göre sütun ve satır sayıları hesaplanır
-satir_sayisi = len(buton_metinleri) // 2
-sutun_sayisi = 2
-
-# Her bir metin için bir buton oluştur
 for i, metin in enumerate(buton_metinleri):
-    satir = i // sutun_sayisi
-    sutun = i % sutun_sayisi
-    buton = Button(frameFonksiyonlarPanel, text=metin, width=10, height=1)
-    buton.grid(row=satir, column=sutun, padx=40, pady=5)
-
-
+    row = i // 2
+    column = i % 2
+    buton = tk.Button(label_frame_fonksiyon, text=metin, width=10, height=1, background='White')
+    buton.grid(row=row, column=column, padx=40, pady=3)
 
 master.mainloop()
