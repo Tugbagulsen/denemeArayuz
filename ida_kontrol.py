@@ -1,18 +1,24 @@
 import tkinter as tk
 from tkinter import LabelFrame
 
+# Ana pencere oluşturuluyor
 master = tk.Tk()
 
+# Canvas (Tuval) boyutları
 canvas_genislik = 1000
 canvas_yukseklik = 450
+
+# Panel boyutları ve marjları
 panel_genislik = 150
 panel_yukseklik = 250
 panel_margin = 10
 top_margin = 20
 
+# Canvas (Tuval) oluşturuluyor ve ekrana yerleştiriliyor
 canvas = tk.Canvas(master, width=canvas_genislik, height=canvas_yukseklik)
 canvas.pack()
 
+# LabelFrame oluşturma fonksiyonu tanımlanıyor
 def label_frame_olusturma(master, text, relx, rely, relwidth, relheight):
     label_frame = LabelFrame(master, text=text)
     label_frame.place(relx=relx, rely=rely, relwidth=relwidth, relheight=relheight)
@@ -59,4 +65,5 @@ for i, metin in enumerate(buton_metinleri):
     buton = tk.Button(label_frame_fonksiyon, text=metin, width=10, height=1, background='White')
     buton.grid(row=row, column=column, padx=40, pady=3)
 
+# Ana döngüyü başlat
 master.mainloop()
