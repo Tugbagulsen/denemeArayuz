@@ -1,28 +1,26 @@
 import tkinter as tk
-from tkinter import LabelFrame
+from tkinter import LabelFrame, messagebox
+import cv2
+from PIL import Image, ImageTk
 
-# Ana pencere oluşturuluyor
 master = tk.Tk()
 
-# Canvas (Tuval) boyutları
 canvas_genislik = 1000
 canvas_yukseklik = 450
-
-# Panel boyutları ve marjları
 panel_genislik = 150
 panel_yukseklik = 250
 panel_margin = 10
 top_margin = 20
 
-# Canvas (Tuval) oluşturuluyor ve ekrana yerleştiriliyor
 canvas = tk.Canvas(master, width=canvas_genislik, height=canvas_yukseklik)
 canvas.pack()
 
-# LabelFrame oluşturma fonksiyonu tanımlanıyor
+
 def label_frame_olusturma(master, text, relx, rely, relwidth, relheight):
     label_frame = LabelFrame(master, text=text)
     label_frame.place(relx=relx, rely=rely, relwidth=relwidth, relheight=relheight)
     return label_frame
+
 
 # Veri Paneli Oluşturma Fonksiyonu
 label_frame_veri = label_frame_olusturma(master, "Veri", 0.04, top_margin / canvas_yukseklik, 0.5, 0.65)
@@ -35,6 +33,7 @@ label_arac.pack(padx=15, pady=5, anchor=tk.NW)
 # Sonuç Paneli Oluşturma Fonksiyonu
 label_frame_sonuc = label_frame_olusturma(master, "Sonuç", 0.04, top_margin / 28, 0.9, 0.2)
 
+
 # Sonuç Label'larını Dinamik Olarak Yerleştirme Fonksiyonu
 def place_labels(veriler):
     for i, veri in enumerate(veriler):
@@ -42,6 +41,7 @@ def place_labels(veriler):
         column = i % 3
         label = tk.Label(label_frame_sonuc, text=veri, font=("Arial", 10))
         label.grid(row=row, column=column, padx=35, pady=5, sticky="w")
+
 
 # Veriler
 veriler = [
@@ -57,13 +57,94 @@ place_labels(veriler)
 # Fonksiyon Paneli Oluşturma Fonksiyonu
 label_frame_fonksiyon = label_frame_olusturma(master, "Fonksiyon", 0.6, 0.2, 0.35, 0.5)
 
+
+# Fonksiyonlar
+def func1():
+    messagebox.showinfo("Bilgi", "Butona 1 tıklandı")
+
+
+def func2():
+    messagebox.showinfo("Bilgi", "Butona 2 tıklandı")
+
+
+def func3():
+    messagebox.showinfo("Bilgi", "Butona 3 tıklandı")
+
+
+def func4():
+    messagebox.showinfo("Bilgi", "Butona 4 tıklandı")
+
+
+def func5():
+    messagebox.showinfo("Bilgi", "Butona 5 tıklandı")
+
+
+def func6():
+    messagebox.showinfo("Bilgi", "Butona 6 tıklandı")
+
+
+def func7():
+    kamera_goruntusu_goster()
+
+
+def func8():
+    messagebox.showinfo("Bilgi", "Butona 8 tıklandı")
+
+
+
+
+def func9():
+    messagebox.showinfo("Bilgi", "Butona 9 tıklandı")
+
+
+def func10():
+    messagebox.showinfo("Bilgi", "Butona 10 tıklandı")
+
+
+def func11():
+    messagebox.showinfo("Bilgi", "Butona 11 tıklandı")
+
+
+def func12():
+    messagebox.showinfo("Bilgi", "Butona 12 tıklandı")
+
+
 # Butonları Dinamik Olarak Yerleştirme
-buton_metinleri = ["Batma", "Çıkma", "Sağ", "Sol", "İleri", "Geri", "Reset", "Kamera", "Arm", "Disarm", "Stabilize", "Auto"]
+buton_metinleri = ["Batma", "Çıkma", "Sağ", "Sol", "İleri", "Geri", "Kamera", "Reset", "Arm", "Disarm", "Stabilize",
+                   "Auto"]
+buton_fonksiyonlari = [func1, func2, func3, func4, func5, func6, func7, func8, func9, func10, func11,
+                       func12]
 for i, metin in enumerate(buton_metinleri):
     row = i // 2
     column = i % 2
-    buton = tk.Button(label_frame_fonksiyon, text=metin, width=10, height=1, background='White')
+    buton = tk.Button(label_frame_fonksiyon, text=metin, width=10, height=1, background='White',
+                      command=buton_fonksiyonlari[i])
     buton.grid(row=row, column=column, padx=40, pady=3)
 
-# Ana döngüyü başlat
+
+def kamera_goruntusu_goster():
+    # Kamera başlatma
+    kamera = cv2.VideoCapture(0)
+
+    # Kameradan bir kare al
+    ret, kare = kamera.read()
+
+    # Kamerayı kapat
+    kamera.release()
+
+    # Eğer kare başarılı bir şekilde alındıysa
+    if ret:
+        # OpenCV kütüphanesinden görüntüyü Tkinter ile uyumlu hale getirme
+        kare = cv2.cvtColor(kare, cv2.COLOR_BGR2RGB)
+        kare = Image.fromarray(kare)
+        kare = ImageTk.PhotoImage(kare)
+
+        # Görüntüyü bir etikete yerleştirme
+        label = tk.Label(label_frame_veri, image=kare)
+        label.image = kare
+        label.pack()
+    else:
+        messagebox.showerror("Hata", "Kamera görüntüsü alınamadı.")
+
+
 master.mainloop()
