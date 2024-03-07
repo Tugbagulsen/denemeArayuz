@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import LabelFrame, messagebox
 import cv2
 from PIL import Image, ImageTk
+import threading
 
 master = tk.Tk()
 
@@ -32,27 +33,6 @@ label_arac.pack(padx=15, pady=5, anchor=tk.NW)
 
 # Sonuç Paneli Oluşturma Fonksiyonu
 label_frame_sonuc = label_frame_olusturma(master, "Sonuç", 0.04, top_margin / 28, 0.9, 0.2)
-
-
-# Sonuç Label'larını Dinamik Olarak Yerleştirme Fonksiyonu
-def place_labels(veriler):
-    for i, veri in enumerate(veriler):
-        row = i // 3
-        column = i % 3
-        label = tk.Label(label_frame_sonuc, text=veri, font=("Arial", 10))
-        label.grid(row=row, column=column, padx=35, pady=5, sticky="w")
-
-
-# Veriler
-veriler = [
-    "Kırmızı Renk Tespit Edildi: ",
-    "Çember Tespit Sayısı: ",
-    "Pinger Tespit Edildi:",
-    "Araç Konumlanıyor:",
-    "Tamamlanan Çember Sayısı:"
-]
-# Dinamik olarak label yerleştirme işlemini gerçekleştir
-place_labels(veriler)
 
 # Fonksiyon Paneli Oluşturma Fonksiyonu
 label_frame_fonksiyon = label_frame_olusturma(master, "Fonksiyon", 0.6, 0.2, 0.35, 0.5)
@@ -91,8 +71,6 @@ def func8():
     messagebox.showinfo("Bilgi", "Butona 8 tıklandı")
 
 
-
-
 def func9():
     messagebox.showinfo("Bilgi", "Butona 9 tıklandı")
 
@@ -123,28 +101,37 @@ for i, metin in enumerate(buton_metinleri):
 
 
 def kamera_goruntusu_goster():
-    # Kamera başlatma
-    kamera = cv2.VideoCapture(0)
+    def kamera_thread():
+        # Kamera başlatma
+        kamera = cv2.VideoCapture(0)
 
-    # Kameradan bir kare al
-    ret, kare = kamera.read()
+        while True:
+            # Kameradan bir kare al
+            ret, kare = kamera.read()
 
-    # Kamerayı kapat
-    kamera.release()
+            # Eğer kare başarılı bir şekilde alındıysa
+            if ret:
+                # OpenCV kütüphanesinden görüntüyü Tkinter ile uyumlu hale getirme
+                kare = cv2.cvtColor(kare, cv2.COLOR_BGR2RGB)
+                kare = Image.fromarray(kare)
+                kare = ImageTk.PhotoImage(kare)
 
-    # Eğer kare başarılı bir şekilde alındıysa
-    if ret:
-        # OpenCV kütüphanesinden görüntüyü Tkinter ile uyumlu hale getirme
-        kare = cv2.cvtColor(kare, cv2.COLOR_BGR2RGB)
-        kare = Image.fromarray(kare)
-        kare = ImageTk.PhotoImage(kare)
+                # Görüntüyü bir etikete yerleştirme
+                label = tk.Label(label_frame_veri, image=kare)
+                label.image = kare
+                label.pack()
 
-        # Görüntüyü bir etikete yerleştirme
-        label = tk.Label(label_frame_veri, image=kare)
-        label.image = kare
-        label.pack()
-    else:
-        messagebox.showerror("Hata", "Kamera görüntüsü alınamadı.")
+                # 10 ms bekleyerek kareyi güncelleme
+                label.after(10, kamera_thread)
+            else:
+                messagebox.showerror("Hata", "Kamera görüntüsü alınamadı.")
+                break
+
+        # Kamerayı kapat
+        kamera.release()
+
+    # Kamera işlemlerini arka planda gerçekleştirme
+    threading.Thread(target=kamera_thread, daemon=True).start()
 
 
 master.mainloop()
