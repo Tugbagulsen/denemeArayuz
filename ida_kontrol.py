@@ -4,6 +4,8 @@ import cv2
 from PIL import Image, ImageTk
 import threading
 
+
+
 master = tk.Tk()
 
 canvas_genislik = 1000
@@ -64,7 +66,7 @@ def func6():
 
 
 def func7():
-    kamera_goruntusu_goster()
+    start_video_capture()
 
 
 def func8():
@@ -134,4 +136,56 @@ def kamera_goruntusu_goster():
     threading.Thread(target=kamera_thread, daemon=True).start()
 
 
+def start_video_capture():
+    def video_thread():
+        # Video kaydı için kamera yakalama
+        cap = cv2.VideoCapture(0)
+
+        if not cap.isOpened():
+            messagebox.showerror("Hata", "Kamera bulunamadı veya açılamadı!")
+            return
+        # Video kaydı için VideoWriter nesnesi oluşturma
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        out = cv2.VideoWriter('video_kaydi.avi', fourcc, 20.0, (640, 480))
+
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if ret:
+                # Her kareyi uygun formata dönüştürme
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                frame = Image.fromarray(frame)
+                frame = ImageTk.PhotoImage(frame)
+
+                # Görüntüyü bir etikete yerleştirme
+                label.config(image=frame)
+                label.image = frame
+
+                # 'q' tuşuna basılınca kayıttan çık
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            else:
+                break
+
+            # 30 ms bekleyerek kareyi güncelleme
+            label.after(30)
+
+        # Pencere ve kayıt nesnelerini serbest bırak
+        cap.release()
+        out.release()
+
+    # İlk kareyi göstermek için bir etiket oluşturma
+    label = tk.Label(label_frame_veri)
+    label.pack()
+
+    # Video işlemlerini arka planda gerçekleştirme
+    threading.Thread(target=video_thread, daemon=True).start()
+
+
+
 master.mainloop()
+
+
+
+
+
+
