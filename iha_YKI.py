@@ -3,8 +3,7 @@ from tkinter import LabelFrame, messagebox
 import cv2
 from PIL import Image, ImageTk
 import threading
-
-
+import socket
 
 master = tk.Tk()
 master.geometry("1500x700+5+0")
@@ -73,7 +72,29 @@ label_kullanici.pack(padx=5)
 label_sifre = tk.Label(frame_arac_sunucu_sag, text="Kullanıcı Şifre:")
 label_sifre.pack(padx=5)
 
-buton_baglan= tk.Button(label_frame_arac, text = "Bağlan")
+baglanma_durum = ""
+
+def deger_yazdir(mesaj):
+    label_baglanti_durumu.config(text =mesaj)
+
+def server_bagla():
+    # Create a socket object
+    s = socket.socket()
+
+    # Define the port on which you want to connect
+    port = 12345
+
+    # connect to the server on local computer
+    s.connect(('127.0.0.1', port))
+    baglanma_durum = s.recv(1024).decode()
+    # receive data from the server and decoding to get the string.
+    #print(s.recv(1024).decode())
+    # close the connection
+    deger_yazdir(baglanma_durum)
+    s.close()
+
+
+buton_baglan= tk.Button(label_frame_arac, text = "Bağlan",command=lambda :server_bagla())
 buton_baglan.pack(pady=20,side = tk.LEFT,anchor=tk.N )
 
 buton_ayril= tk.Button(label_frame_arac, text = "Ayril")
@@ -143,9 +164,6 @@ label_mod = tk.Label(label_frame_bilgi,text="Mod Durum:")
 label_mod.place(relx=0.43,rely=0.35)
 entry_mod  = tk.Entry(label_frame_bilgi)
 entry_mod .place(relx=0.5, rely=0.35)
-
-
-
 
 
 
@@ -332,3 +350,4 @@ def start_video_capture():
 
 master.mainloop()
 
+#wifi üzerinden yazı yollama
